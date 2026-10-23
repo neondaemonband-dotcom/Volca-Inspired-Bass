@@ -1,0 +1,31 @@
+
+name: Build Windows VST3
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download JUCE
+        shell: pwsh
+        run: git clone --depth 1 --branch 8.0.10 https://github.com/juce-framework/JUCE.git JUCE
+
+      - name: Configure
+        shell: pwsh
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DJUCE_DIR="$PWD/JUCE"
+
+      - name: Build
+        run: cmake --build build --config Release --target VolcaInspired_VST3 --parallel 4
+
+      - name: Upload plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: VolcaInspired-Windows-VST3
+          path: build/VolcaInspired_artefacts/Release/VST3/*.vst3
+          if-no-files-found: error
