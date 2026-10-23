@@ -60,4 +60,8 @@ void VolcaInspiredAudioProcessor::processBlock(juce::AudioBuffer<float>& audio,j
 }
 void VolcaInspiredAudioProcessor::getStateInformation(juce::MemoryBlock& dest) {auto xml=apvts.copyState().createXml(); copyXmlToBinary(*xml,dest);}
 void VolcaInspiredAudioProcessor::setStateInformation(const void* data,int bytes) {auto xml=getXmlFromBinary(data,bytes); if(xml && xml->hasTagName(apvts.state.getType())) apvts.replaceState(juce::ValueTree::fromXml(*xml));}
+juce::AudioProcessorEditor* VolcaInspiredAudioProcessor::createEditor()
+{
+    return new VolcaInspiredAudioProcessorEditor(*this);
+}
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() {return new VolcaInspiredAudioProcessor();}
